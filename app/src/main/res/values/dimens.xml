@@ -1,0 +1,4 @@
+<resources>
+    <!-- Add or update the margin dimension -->
+    <dimen name="table_margin">0dp</dimen>
+</resources>

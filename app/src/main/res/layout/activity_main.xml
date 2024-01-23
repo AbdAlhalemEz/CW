@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/table_margin"
+    tools:context=".MainActivity"
+    android:background="@drawable/bg">
+
+    <!-- Replace Button with EditText for each cell -->
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_border">
+
+        <!-- Use EditText instead of Button for each cell -->
+        <EditText
+            android:id="@+id/editText00"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters|textNoSuggestions"
+            android:gravity="center"
+            android:maxLength="1"
+            android:focusableInTouchMode="false"
+            android:background="@android:color/transparent" />
+
+        <!-- Add more EditText elements for other cells -->
+
+    </GridLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:onClick="checkAnswer"
+            android:background="#00000000"
+            />
+
+        <!-- Add this EditText for user input -->
+        <EditText
+            android:id="@+id/letterInput"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:inputType="textCapCharacters"
+            android:maxLength="1"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/hintButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Hint"
+            android:onClick="showHint" />
+
+        <Button
+            android:id="@+id/hintButtonCell"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Show Cell Hint"
+            android:onClick="showCellHint" />
+
+        <Button
+            android:id="@+id/showWordsButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Show Words"
+            android:onClick="showWords" />
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Reset Game"
+            android:onClick="resetGame" />
+
+
+    </LinearLayout>
+    <!-- Vertical Words Hint TextView -->
+    <TextView
+        android:id="@+id/verticalWordsHintTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Vertical Word Hint:"
+        android:textStyle="bold" />
+
+    <!-- Horizontal Words Hint TextView -->
+    <TextView
+        android:id="@+id/horizontalWordsHintTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Horizontal Word Hint:"
+        android:textStyle="bold" />
+
+
+    <!-- Vertical Words TextView -->
+    <TextView
+        android:id="@+id/verticalWordsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Vertical Words:"
+        android:textColor="#8C3D3D"
+        android:textColorHighlight="#932A2A"
+        android:textColorHint="#802424"
+        android:textStyle="bold" />
+
+    <!-- Horizontal Words TextView -->
+    <TextView
+        android:id="@+id/horizontalWordsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Horizontal Words:"
+        android:textStyle="bold" />
+
+</LinearLayout>
