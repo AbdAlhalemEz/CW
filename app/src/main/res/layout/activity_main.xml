@@ -25,7 +25,9 @@
             android:gravity="center"
             android:maxLength="1"
             android:focusableInTouchMode="false"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+
+            />
 
         <!-- Add more EditText elements for other cells -->
 
@@ -90,6 +92,18 @@
 
 
     </LinearLayout>
+    <!-- Add this to your layout -->
+    <ToggleButton
+        android:id="@+id/toggleButtonDirection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOn="Down"
+        android:textOff="Left"
+        android:layout_marginTop="16dp"
+        android:checked="true"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onToggleDirection"/>
+
     <!-- Vertical Words Hint TextView -->
     <TextView
         android:id="@+id/verticalWordsHintTextView"

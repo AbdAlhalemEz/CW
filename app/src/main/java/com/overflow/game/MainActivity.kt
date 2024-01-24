@@ -1,26 +1,35 @@
 package com.overflow.game
 
+import android.app.Dialog
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 
 data class WordClue(val word: String, val clue: String)
 
 class MainActivity : AppCompatActivity() {
+    private var isDownFocus = true // Default direction is down
 
     private lateinit var gridArray: Array<CharArray>
     private var numRows = 0
@@ -36,6 +45,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val toggleButton: ToggleButton = findViewById(R.id.toggleButtonDirection)
+        toggleButton.setOnCheckedChangeListener { _, isChecked ->
+            isDownFocus = isChecked
+        }
 
         sharedPreferences = getPreferences(MODE_PRIVATE)
 
@@ -68,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
         wordClues = listOf(
             WordClue("سوريا", "عاصمتها دمشق"),
-            WordClue("عراق", "بلاد الرافديت"),
+            WordClue("عراق", "imiraq"),
             WordClue("قارع", "wtf"),
             WordClue("مصر", "ام الدنبا"),
             WordClue("الاردن", "جنوب سوريا"),
@@ -88,6 +102,12 @@ class MainActivity : AppCompatActivity() {
         val savedUserAnswer = sharedPreferences.getString("userAnswer", "")
         updateUIWithSavedState(savedUserAnswer)
     }
+    fun onToggleDirection(view: View) {
+        // Called when the toggle button is clicked
+        val toggleButton: ToggleButton = findViewById(R.id.toggleButtonDirection)
+        isDownFocus = toggleButton.isChecked
+    }
+
 
     private fun initializeGridLayout() {
         gridLayout.removeAllViews()
@@ -140,6 +160,35 @@ class MainActivity : AppCompatActivity() {
         }
 
         editText.layoutParams = params
+
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                // Only allow one character in each cell
+                if (count > 1) {
+                    // If the user entered more than one letter, replace with the last entered letter
+                    editText.setText(charSequence?.subSequence(charSequence.length - 1, charSequence.length))
+                    editText.setSelection(1)
+                }
+
+                if (count == 1) {
+                    // Move focus based on the current direction
+                    if (isDownFocus && i < numRows - 1) {
+                        // Move down if down focus is enabled and not in the last row
+                        val nextEditText = gridLayout.getChildAt((i + 1) * numCols + j) as? EditText
+                        nextEditText?.requestFocus()
+                    } else if (!isDownFocus && j > 0) {
+                        // Move left if left focus is enabled and not in the leftmost column
+                        val previousEditText = gridLayout.getChildAt(i * numCols + (j - 1)) as? EditText
+                        previousEditText?.requestFocus()
+                    }
+                }
+            }
+
+            override fun afterTextChanged(editable: Editable?) {}
+        })
+
         return editText
     }
 
@@ -227,13 +276,46 @@ class MainActivity : AppCompatActivity() {
             val horizontalWordClue = wordClues.find { it.word == horizontalWord }
             val verticalWordClue = wordClues.find { it.word == verticalWord }
 
-            val horizontalHint = horizontalWordClue?.let { "Horizontal Word Hint: ${it.clue}" } ?: ""
-            val verticalHint = verticalWordClue?.let { "Vertical Word Hint: ${it.clue}" } ?: ""
+            val horizontalHint = horizontalWordClue?.let {
+                if (it.clue.startsWith("im")) {
+                    showImageDialog(it.clue.substring(2), it.clue) // Remove "im" prefix
+                    ""
+                } else {
+                    "Horizontal Word Hint: ${it.clue}"
+                }
+            } ?: ""
+
+            val verticalHint = verticalWordClue?.let {
+                if (it.clue.startsWith("im")) {
+                    showImageDialog(it.clue.substring(2), it.clue) // Remove "im" prefix
+                    ""
+                } else {
+                    "Vertical Word Hint: ${it.clue}"
+                }
+            } ?: ""
 
             horizontalHintTextView.text = horizontalHint
             verticalHintTextView.text = verticalHint
         }
     }
+
+    private fun showImageDialog(imageResourceName: String, clue: String) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.image_dialog_layout)
+
+        val imageView: ImageView = dialog.findViewById(R.id.imageView)
+        val clueTextView: TextView = dialog.findViewById(R.id.clueTextView)
+
+        val imageResourceId = resources.getIdentifier(imageResourceName, "drawable", packageName)
+        imageView.setImageResource(imageResourceId)
+
+        clueTextView.text = "Clue: $clue"
+
+        dialog.show()
+    }
+
+
 
     private fun findHorizontalWord(row: Int, col: Int): String {
         val horizontalWord = StringBuilder()
