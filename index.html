@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table to Array</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="tableForm">
+        <label for="rows">Number of Rows:</label>
+        <input type="number" id="rows" name="rows" min="1" required>
+
+        <label for="cols">Number of Columns:</label>
+        <input type="number" id="cols" name="cols" min="1" required>
+
+        <button type="button" onclick="createTable()">Create Table</button>
+    <button type="button" onclick="convertToString(); copyToClipboard();">Submit</button>
+
+    </form>
+
+    <br>
+
+    <table id="myTable"></table>
+
+    <br>
+
+    <span id="resultSpan"></span>
+
+    <script>
+        function createTable() {
+            var rows = document.getElementById("rows").value;
+            var cols = document.getElementById("cols").value;
+
+            var table = document.getElementById("myTable");
+            table.innerHTML = "";
+
+            for (var i = 0; i < rows; i++) {
+                var row = table.insertRow(i);
+                for (var j = 0; j < cols; j++) {
+                    var cell = row.insertCell(j);
+                    cell.contentEditable = true;
+            cell.addEventListener('input', function (event) {
+    var target = event.target;
+    // Allow Arabic letters, English letters, and space
+    if (/^[a-zA-Z\u0600-\u06FF\s]$/.test(target.innerText)) {
+        movePrevious(target);
+    } else {
+        target.innerText = ''; // Clear content if not a single letter or space
+    }
+});
+                }
+            }
+        }
+
+        function movePrevious(currentCell) {
+            var table = document.getElementById("myTable");
+            var rows = table.rows.length;
+            var cols = table.rows[0].cells.length;
+
+            var rowIndex = currentCell.parentElement.rowIndex;
+            var colIndex = currentCell.cellIndex;
+
+            if (colIndex > 0) {
+                // Move to the previous cell in the same row
+                table.rows[rowIndex].cells[colIndex - 1].focus();
+            } else {
+                if (rowIndex < rows - 1) {
+                    // Move to the last cell in the next row
+                    table.rows[rowIndex + 1].cells[cols - 1].focus();
+                } else {
+                    // If at the first cell of the last row, wrap to the last cell
+                    table.rows[0].cells[cols - 1].focus();
+                }
+            }
+        }
+function convertToString() {
+    var table = document.getElementById("myTable");
+    var rows = table.rows.length;
+    var cols = table.rows[0].cells.length;
+    var resultString = "";
+
+    for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < cols; j++) {
+            var cellContent = table.rows[i].cells[j].innerText.trim();
+            resultString += cellContent || '.';
+        }
+
+        var firstCellContent = table.rows[i].cells[0].innerText.trim();
+        if (i === 0 && (!firstCellContent || /^\s+$/.test(firstCellContent))) {
+            resultString += '.';
+        }
+
+        if (i < rows - 1) {
+            resultString += "*";
+        }
+    }
+
+    document.getElementById("resultSpan").innerText = resultString;
+}
+
+function copyToClipboard() {
+    var resultSpan = document.getElementById("resultSpan");
+    var textToCopy = resultSpan.innerText;
+
+    var textarea = document.createElement("textarea");
+    textarea.value = textToCopy;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+
+    
+}
+
+
+
+    </script>
+
+</body>
+</html>
